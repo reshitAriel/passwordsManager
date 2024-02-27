@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+
+  client:
+    build: ./client
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/app
+      - /app/node_modules/
+
+  server:
+    build: ./server
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: z10mz10m
+      DB_NAME: passwords_manager
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server:/app/server
+      - '/app/server/node_modules'
+      - ./client/dist:/app/client/dist
+    depends_on:
+      - db
+      - client
+    links:
+      - db
+
+  db:
+    image: mysql:8.2.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: passwords_manager
+      MYSQL_ROOT_PASSWORD: z10mz10m
+
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  db:
+    driver: local
