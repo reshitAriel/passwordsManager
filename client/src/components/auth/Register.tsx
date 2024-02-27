@@ -34,7 +34,7 @@ const Register: FC = () => {
       await axios.post("/api/auth/register", data);
     },
     onSuccess: () => {
-      navigate("/");
+      navigate("/login");
     },
   });
 

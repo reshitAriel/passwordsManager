@@ -6,30 +6,30 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        private userService: UserService,
-        private jwtService: JwtService,
-    ) { }
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+  ) {}
 
-    async login(username: string, pass: string): Promise<any> {
-        const user = await this.userService.findByUsername(username, { id: true, username: true, password: true });
-        const isMatch = await bcrypt.compare(pass, user?.password);
+  async login(username: string, pass: string): Promise<any> {
+    const user = await this.userService.findByUsername(username, {
+      id: true,
+      username: true,
+      password: true,
+    });
+    const isMatch = await bcrypt.compare(pass, user?.password);
 
-        if (!isMatch) {
-            throw new UnauthorizedException();
-        }
-        const payload = { id: user.id, username: user.username };
-        return this.jwtService.signAsync(payload);
+    if (!isMatch) {
+      throw new UnauthorizedException();
     }
+    const payload = { id: user.id, username: user.username };
+    return this.jwtService.signAsync(payload);
+  }
 
-    async register(user: User): Promise<any> {
+  async register(user: User): Promise<any> {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(user.password, salt);
 
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(user.password, salt);
-
-        await this.userService.save({ ...user, password: hashedPassword });
-
-        const payload = { id: user.id, username: user.username };
-        return this.jwtService.signAsync(payload);
-    }
+    await this.userService.save({ ...user, password: hashedPassword });
+  }
 }
