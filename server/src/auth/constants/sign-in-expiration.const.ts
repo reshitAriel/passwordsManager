@@ -1,1 +1,1 @@
-export const SIGN_NI_EXPIRATION = 10;
+export const SIGN_IN_EXPIRATION = 10;
