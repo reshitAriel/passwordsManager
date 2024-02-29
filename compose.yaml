@@ -1,17 +1,10 @@
 version: "3.9"
 
 services:
-
-  client:
-    build: ./client
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./client:/app
-      - /app/node_modules/
-
+  
   server:
-    build: ./server
+    image: server
+    build: .
     environment:
       DB_HOST: db
       DB_PORT: 3306
@@ -20,13 +13,8 @@ services:
       DB_NAME: passwords_manager
     ports:
       - "8080:8080"
-    volumes:
-      - ./server:/app/server
-      - '/app/server/node_modules'
-      - ./client/dist:/app/client/dist
     depends_on:
       - db
-      - client
     links:
       - db
 

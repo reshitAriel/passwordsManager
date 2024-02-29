@@ -15,8 +15,19 @@ ENV DB_PASSWORD=$DB_PASSWORD
 ARG DB_NAME
 ENV DB_NAME=$DB_NAME
 
+
 WORKDIR /app
-COPY . ./server
+
+COPY ./client ./client
+
+WORKDIR /app/client
+
+RUN npm install
+RUN npm run build
+
+
+WORKDIR /app
+COPY ./server ./server
 
 WORKDIR /app/server
 RUN npm cache clean --force
