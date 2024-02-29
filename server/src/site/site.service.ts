@@ -6,28 +6,27 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class SiteService {
-    constructor(
-        @InjectRepository(Site)
-        private readonly siteRepository: Repository<Site>
-    ) { }
+  constructor(
+    @InjectRepository(Site)
+    private readonly siteRepository: Repository<Site>,
+  ) {}
 
-    async find() {
-        const sites = await this.siteRepository.find({});
+  async find(userId: string) {
+    const sites = await this.siteRepository.find({ where: { userId } });
 
-        return sites.map(site => {
-            site.password = decryptData(site.password);
-            return site;
-        });
-    }
+    return sites.map((site) => {
+      site.password = decryptData(site.password);
+      return site;
+    });
+  }
 
-    save(site: Partial<Site>) {
-        if (site.password)
-            site.password = encryptData(site.password);
+  save(site: Partial<Site>) {
+    if (site.password) site.password = encryptData(site.password);
 
-        return this.siteRepository.save(site);
-    }
+    return this.siteRepository.save(site);
+  }
 
-    delete(siteId: number, userId: string) {
-        return this.siteRepository.delete({ id: siteId, userId });
-    }
+  delete(siteId: number, userId: string) {
+    return this.siteRepository.delete({ id: siteId, userId });
+  }
 }
